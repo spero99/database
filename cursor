@@ -1,0 +1,27 @@
+CREATE OR REPLACE FUNCTION query_a()
+	RETURNS text AS $$
+DECLARE 
+	cur_a CURSOR FOR SELECT type count(type ) from tickets;
+	cur_b CURSOR(typos VARCHAR) FOR SELECT  * FROM transactions WHERE type=typos;
+	typos VARCHAR := '';
+	counter INTEGER= 0;
+BEGIN
+	OPEN cur_a ;
+	OPEN cur_b
+	LOOP 
+		FETCH cur_a INTO typos;
+		RETURN typos;
+		
+		LOOP
+			FETCH cur_b;
+			SET counter = counter + 1 ;
+			EXIT WHEN NOT FOUND 
+			RETURN TYPOS, COUNTER;
+			SET COUNTER = 0 ;
+		END LOOP
+	END LOOP
+END 
+		
+	
+	
+	
