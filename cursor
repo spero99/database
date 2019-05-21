@@ -1,26 +1,22 @@
-
-CREATE TABLE table2(
-	ticket_type VARCHAR(50) ,
-	num_tick  integer,
-	primary key(ticket_type)
+create table if not exists table2(
+	ticket_type varchar(50),
+	num_tick integer
 );
-	do $$
 
+	do $$
 DECLARE 
 	var_typos VARCHAR := ' ';
 	var_helper VARCHAR := '';
 	var_counter INTEGER= 0;
-	cur_a CURSOR FOR SELECT type from tickets group by tickets.type;
-	cur_b CURSOR FOR SELECT  * FROM transactions WHERE type=var_typos;
+	cur_a CURSOR FOR SELECT type from tickets ;
+	cur_b CURSOR FOR SELECT  *	FROM tickets INNER JOIN transactions ON transactions.tickets_id = tickets.id WHERE type=var_typos;
 
 BEGIN
 	OPEN cur_a ;
-	
-	LOOP 
+	loop
 	
 		FETCH cur_a INTO var_typos;
-		
-		
+				
 		OPEN cur_b;
 		BEGIN
 			LOOP
@@ -29,15 +25,19 @@ BEGIN
 				EXIT WHEN NOT FOUND ;
 				INSERT INTO table2 ( ticket_type,num_tick ) VALUES ( var_typos,var_counter);
 				var_counter := 0 ;
+				
 			END LOOP;
+		
 		END;
 		CLOSE cur_b;
 		
-	END LOOP;
+	exit when not found ;
+	end loop;
 	CLOSE cur_a;
-	SELECT * FROM table2 ;
+	
 END$$ ;
-		
+select ticket_type ,count(ticket_type)from table2 group by table2.ticket_type;
+
 	
 	
 	
