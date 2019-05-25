@@ -1,43 +1,26 @@
-create table if not exists table2(
-	ticket_type varchar(50),
-	num_tick integer
-);
+CREATE OR REPLACE FUNCTION CURFUR()
+	RETURNS TABLE(
+		typos TEXT,
+		counter INTEGER
+		)AS $$
+	DECLARE
+	rec_type record;
+	cur cursor for 
+	select type as typos ,count(type) as counter
+	from tickets inner join transactions on transactions.tickets_id = tickets.id
+	group by tickets.type;
+	begin
+		open cur;
+			loop
+				fetch cur into rec_type;
+				exit when not found;
+				typos :=rec_type.typos;
+				counter :=rec_type.counter;
+				return next;
+			end loop;
+		close cur;
+	end;
+$$
+language plpgsql;
 
-	do $$
-DECLARE 
-	var_typos VARCHAR := ' ';
-	var_helper VARCHAR := '';
-	var_counter INTEGER= 0;
-	cur_a CURSOR FOR SELECT type from tickets ;
-	cur_b CURSOR FOR SELECT  *	FROM tickets INNER JOIN transactions ON transactions.tickets_id = tickets.id WHERE type=var_typos;
-
-BEGIN
-	OPEN cur_a ;
-	loop
-	
-		FETCH cur_a INTO var_typos;
-				
-		OPEN cur_b;
-		BEGIN
-			LOOP
-				FETCH cur_b INTO var_helper;
-				var_counter := var_counter + 1 ;
-				EXIT WHEN NOT FOUND ;
-				INSERT INTO table2 ( ticket_type,num_tick ) VALUES ( var_typos,var_counter);
-				var_counter := 0 ;
-				
-			END LOOP;
-		
-		END;
-		CLOSE cur_b;
-		
-	exit when not found ;
-	end loop;
-	CLOSE cur_a;
-	
-END$$ ;
-select ticket_type ,count(ticket_type)from table2 group by table2.ticket_type;
-
-	
-	
-	
+select curfur();
