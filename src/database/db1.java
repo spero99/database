@@ -1,27 +1,29 @@
 package database;
 
 import java.sql.*;
+import java.util.Date;
 import java.util.Objects;
 import java.util.Scanner;
 
 
 public class db1 {
 
-	
-	
+
+
 	public static void main(String[] args) {
-	
+
 
 		System.out.println("start");
-		
-		
+
+
 		Connection c=null;
+		PreparedStatement prepared_stmt=null;
 		Statement stmt=null;
 		ResultSet rs=null;
 		try {
 			c=DriverManager.getConnection("jdbc:postgresql://83.212.107.74/ergasia_baseis","postgres","baseisdedomenwn");
 			System.out.println("Opened database successfully");
-         
+
 			stmt = c.createStatement();
 			Scanner scan =new Scanner(System.in);
 
@@ -36,7 +38,7 @@ public class db1 {
 				//}
 				switch (choice) {
 					case "0":
-						return;
+						break;
 					case "1":
 
 						//first sql querry
@@ -193,15 +195,33 @@ public class db1 {
 						String sql7 = " select tickets.id,tickets.procurer,tickets.type,tickets.location,tickets.price,tickets.genre\r\n" +
 								"from transactions\r\n" +
 								"INNER JOIN tickets ON transactions.tickets_id = tickets.id\r\n" +
-								"where  conf_date  > '2019-1-25' AND conf_date < CURRENT_DATE\r\n" +
+								"where  conf_date  > ? AND conf_date < CURRENT_DATE\r\n" +
 								"group by tickets.id\r\n" +
 								"; ";
+						System.out.println("give date in the form  yyyy-mm-dd");
+						Scanner scanQueryParameter=new Scanner(System.in);
 
-						rs = stmt.executeQuery(sql7);
+						String strDate =scanQueryParameter.next();
+
+
+
+						prepared_stmt=c.prepareStatement(sql7);
+						System.out.println("**");
+
+						prepared_stmt.setDate(1,java.sql.Date.valueOf(strDate));
+						System.out.println("***");
+
+						rs = prepared_stmt.executeQuery();
 						System.out.println("Execute query 7 successfully");
+
 						ResultSetMetaData rsmd7 = rs.getMetaData();
 						int columnsNumber7 = rsmd7.getColumnCount();
+
 						while (rs.next()) {
+
+
+
+
 							for (int i = 1; i <= columnsNumber7; i++) {
 								if (i > 1) System.out.print(",  ");
 								String columnValue = rs.getString(i);
@@ -215,9 +235,9 @@ public class db1 {
 
 				}
 			}
-			
+
 		} catch (SQLException ex) {
-        
+
 		} finally {
 			try {
 				if (rs != null) {
@@ -229,11 +249,11 @@ public class db1 {
 				if (c != null) {
 					c.close();
 				}
-			} 
+			}
 			catch (SQLException ex) {
-	
-		}
-	
+
+			}
+
 		}
 	}
 }
