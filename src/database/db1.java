@@ -32,10 +32,7 @@ public class db1 {
 				System.out.println("menu..,1.2.3.4...7 sql queries,press 0 to quit");
 				String choice=scan.next();
 
-				//while(!(Objects.equals(choice,"0")|Objects.equals(choice,"1")|Objects.equals(choice,"2")|Objects.equals(choice,"3")|Objects.equals(choice,"4")|Objects.equals(choice,"5")| Objects.equals(choice,"6")|Objects.equals(choice,"7"))){
-				//	System.out.println("Invalid input.Press 0 or 1 or 2 ..");
-				//	choice = scan.next();
-				//}
+
 				switch (choice) {
 					case "0":
 						break;
@@ -59,7 +56,7 @@ public class db1 {
 						}
 						rs.close();
 						continue;
-						//choice=scan.next();
+
 						//-----------------------------------------------------------------------------------------------------------------------------------------------\\
 					case "2":
 						System.out.println(" ");
@@ -81,7 +78,7 @@ public class db1 {
 						}
 						rs.close();
 						continue;
-						//choice=scan.next();
+
 						//------------------------------------------------------------------------------------------------------------------------------------------------\\
 
 					case "3":
@@ -203,13 +200,9 @@ public class db1 {
 
 						String strDate =scanQueryParameter.next();
 
-
-
 						prepared_stmt=c.prepareStatement(sql7);
-						System.out.println("**");
 
 						prepared_stmt.setDate(1,java.sql.Date.valueOf(strDate));
-						System.out.println("***");
 
 						rs = prepared_stmt.executeQuery();
 						System.out.println("Execute query 7 successfully");
@@ -218,9 +211,6 @@ public class db1 {
 						int columnsNumber7 = rsmd7.getColumnCount();
 
 						while (rs.next()) {
-
-
-
 
 							for (int i = 1; i <= columnsNumber7; i++) {
 								if (i > 1) System.out.print(",  ");
